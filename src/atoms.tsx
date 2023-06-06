@@ -1,4 +1,10 @@
 import { atom, selector } from "recoil";
+import { recoilPersist } from "recoil-persist";
+
+const { persistAtom } = recoilPersist({
+  key: "recoil-persist",
+  storage: localStorage,
+});
 
 export interface IToGo {
   id: number;
@@ -9,6 +15,7 @@ export interface IToGo {
 export const toGoState = atom<IToGo[]>({
   key: "toGo",
   default: [],
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const toGoSelector = selector({

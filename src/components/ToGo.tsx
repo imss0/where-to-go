@@ -1,10 +1,16 @@
+import styled from "styled-components";
 import { useSetRecoilState, useRecoilValue } from "recoil";
-import { IToGo, toGoSelector, toGoState } from "../atoms";
+import { IToGo, toGoState } from "../atoms";
+
+const Btn = styled.button`
+  margin: 5px;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+`;
 
 function ToGo({ text, state, id }: IToGo) {
   const setToGos = useSetRecoilState(toGoState);
-  const selectorOutput = useRecoilValue(toGoSelector);
-  console.log(selectorOutput);
   const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     const {
       currentTarget: { name },
@@ -20,38 +26,42 @@ function ToGo({ text, state, id }: IToGo) {
     });
   };
 
+  const onDelete = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setToGos((currentToGos) => {
+      const targetIndex = currentToGos.findIndex((toGo) => toGo.id === id);
+      return [
+        ...currentToGos.slice(0, targetIndex),
+        ...currentToGos.slice(targetIndex + 1),
+      ];
+    });
+  };
+
   return (
     <li>
       <span>{text}</span>
       {state === "TO_GO" && (
-        <button name="VISITED" onClick={onClick}>
+        <Btn name="VISITED" onClick={onClick}>
           ✅
-        </button>
+        </Btn>
       )}
-      {state === "TO_GO" && (
-        <button name="DELETE" onClick={onClick}>
-          🗑️
-        </button>
-      )}
+      {state === "TO_GO" && <Btn onClick={onDelete}>🗑️</Btn>}
       {state === "VISITED" && (
-        <button name="LIKE" onClick={onClick}>
+        <Btn name="LIKE" onClick={onClick}>
           ❤️
-        </button>
+        </Btn>
       )}
       {state === "VISITED" && (
-        <button name="TO_GO" onClick={onClick}>
+        <Btn name="TO_GO" onClick={onClick}>
           ❌
-        </button>
+        </Btn>
       )}
       {state === "LIKE" && (
-        <button name="VISITED" onClick={onClick}>
+        <Btn name="VISITED" onClick={onClick}>
           💔
-        </button>
+        </Btn>
       )}
     </li>
   );
 }
 
 export default ToGo;
-
-// 남은 작업 : Delete, localStorage, required
